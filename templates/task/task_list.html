@@ -1,0 +1,90 @@
+{% include 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <div class="jumbotron">
+        <p class="d-inline-flex gap-1">
+            <a class="btn btn-outline-success" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                Add Task &nbsp; <i class='bx bxs-plus-circle' ></i>
+            </a>
+          </p>
+          <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+              <h1>Add new Task</h1>
+              <form action="{%  url 'task_list' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input type="submit" class="btn btn-success" value="ADD">
+              </form>
+            </div>
+          </div>
+
+        <h1 class="mt-3">List of all tasks</h1>
+        <table class="table mt-3">
+            <thead>
+                <tr class="table-info">
+                    <th scope="col">Task ID</th>
+                    <th scope="col">Task Name</th>
+                    <th scope="col">Assigned To</th>
+                    <th scope="col">Assigned By</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Priority</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Delete</th>
+
+                </tr>
+            </thead>
+            <tbody >
+                {% for tasks in alltasks %}
+                        {% if tasks.status == 'Pending' %}
+                        <tr class="table-danger">
+                        {% elif tasks.status == 'Completed' %}
+                        <tr class="table-success">
+                        {% elif tasks.status == 'Onprocess' %}
+                        <tr class="table-light">
+                        {% endif %}
+                        <th scope="row">{{ tasks.task_id }}</th>
+                        <td>{{ tasks.task_name }}</td>
+                        <td>{{ tasks.assigned_to }}</td>
+                        <td>{{ tasks.assigned_by }}</td>
+                        <td><a href="{% url 'task_description' id=tasks.id %}" class="text-secondary" >more info</a></td>
+                        <td>{{ tasks.date }}</td>
+                        <td>{{ tasks.status }}</td>
+                        <td>
+                            {% if tasks.priority|lower == 'high' %}
+                                <i class='bx bxs-bell-ring text-danger'></i>
+                            {% elif tasks.priority|lower == 'medium' %}
+                                <i class='bx bxl-medium-square text-warning'></i>
+                            {% elif tasks.priority|lower == 'low' %}
+                                <i class='bx bxs-sleepy text-info'></i>
+                            {% endif %}
+                        </td>
+                        
+                        <td><a href="{% url 'edit_task' id=tasks.id %}" class="text-secondary"><i class='bx bx-edit-alt'></i></a></td>
+                        <td><a href="{% url 'delete_task' id=tasks.id %}" class="text-danger"><i class='bx bxs-trash' ></i></a></td>
+                    </tr>
+                    
+
+                {% endfor %}
+            </tbody>
+
+        </table>
+        <br>
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="?pg=1">First</a></li>
+            {% if alltasks.has_previous %}
+            <li class="page-item"><a class="page-link" href="?pg={{ alltasks.previous_page_number }}">{{ alltasks.previous_page_number }}</a></li>
+            {% endif %}
+            <li class="page-item"><a class="page-link" href="?pg={{ alltasks.number }}">{{ alltasks.number }}</a></li>
+            {% if alltasks.has_next %}
+            <li class="page-item"><a class="page-link" href="?pg={{ alltasks.next_page_number }}">{{ alltasks.next_page_number}}</a></li>
+            {% endif %}
+            <li class="page-item"><a class="page-link" href="?pg={{ alltasks.paginator.num_pages }}">Last</a></li>
+          </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}

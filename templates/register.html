@@ -1,0 +1,40 @@
+{% include 'base.html' %} {% load crispy_forms_tags %}
+<style>
+  .jumbotron {
+    background-color: #ada6a6;
+    padding: 20px;
+  }
+  .container {
+    background-color: #f0f0f0;
+    padding: 20px;
+    margin-top: 20px;
+    align-content: center;
+    row-gap: 20px;
+  }
+  .container1{
+    padding: 20px;
+    margin-top: 20px;
+    align-content: center;
+  }
+
+</style>
+{% block content %} 
+    {% if registered %}
+    <div class=" card card-body bg-dark text-white m-5 p-5 border-success border-3">
+      <h1 class="">Registration Successfull !!!😊</h1>
+       <p class="fst-italic ">Please proceed to <a href="{% url 'login' %}" class="btn btn-outline-info">login </a></p>
+      </div>
+    {% else %}
+        <div class="jumbotron text-center">
+            <h1>UserRegistration</h1>
+        </div>
+        <div class="container flex">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} 
+            {{ user_form|crispy }} 
+            {{ profile_form|crispy }}
+            <button type="submit" class="btn btn-info">Register</button>
+        </form>
+        </div>
+    {% endif %}
+{% endblock %}
